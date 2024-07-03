@@ -6,12 +6,14 @@ import useCurrencyInfo from './hooks/useCurrencyInfo'
 function App() {
   const [fromAmount, setFromAmount] = useState(0)
   const [toAmount, setToAmount] = useState(0)
-  const [fromCurrency, setFromCurrency] = useState("usd")
-  const [toCurrency, setToCurrency] = useState("inr")
+  const [fromCurrency, setFromCurrency] = useState("inr")
+  const [toCurrency, setToCurrency] = useState("usd")
   const currencyInfo = useCurrencyInfo(fromCurrency)
 
   const updateAmount = () => {
-    setToAmount((fromAmount * currencyInfo[toCurrency]).toFixed(4))
+    let amount = (fromAmount * currencyInfo[toCurrency])
+    if (amount % 1 !== 0) amount = amount.toFixed(2)
+    setToAmount(amount)
   }
 
   const swap = () => {
@@ -38,7 +40,6 @@ function App() {
             Currency Converter
           </p>
           <Box
-            style="text-black"
             label="From"
             amount={fromAmount}
             currency={fromCurrency}
@@ -56,7 +57,6 @@ function App() {
           </button>
 
           <Box
-            style="text-black"
             label="To"
             amount={toAmount}
             currency={toCurrency}
