@@ -11,12 +11,12 @@ function App() {
   const [isRunning, setIsRunning] = useState(false)
   const [seconds, setSeconds] = useState(0)
   const [limit, setLimit] = useState(pomo)
-  const [bgColor, setBgColor] = useState(`bg-${pomoclr}`)
+  const [bgColor, setBgColor] = useState(pomoclr)
   let timer = useRef(null)
 
   useEffect(() => {
     //If timer expired
-    if (seconds >= limit) {
+    if (seconds >= limit * 60) {
       if (isRunning) {
         window.alert("Please reset the timer!");
         setIsRunning(false);
@@ -27,7 +27,7 @@ function App() {
     if (isRunning) {
       timer.current = setInterval(() => {
         setSeconds(prev => {
-          if (prev >= limit - 1) {
+          if (prev >= limit * 60 - 1) {
             clearInterval(timer.current);
             setIsRunning(false);
             if (audio.paused) {
@@ -59,11 +59,11 @@ function App() {
 
     //mode change
     if (mode === pomo) {
-      setBgColor(`bg-${pomoclr}`)
+      setBgColor(pomoclr)
     } else if (mode === short) {
-      setBgColor(`bg-${shortclr}`)
+      setBgColor(shortclr)
     } else {
-      setBgColor(`bg-${longclr}`)
+      setBgColor(longclr)
     }
     setLimit(mode)
   }
@@ -73,7 +73,7 @@ function App() {
 
   return (
     <div
-      className={`w-full h-screen ${bgColor} transition-colors duration-1000 text-gray-200 flex flex-col items-center justify-between p-4`}
+      className={`w-full h-screen bg-${bgColor} transition-colors duration-1000 text-gray-200 flex flex-col items-center justify-between p-4`}
     >
       <div
         className='w-full max-w-screen-sm flex mt-4 md:mt-10'
