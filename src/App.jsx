@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import './App.css';
 
+const audio = new Audio("alarm.mp3")
+
 function App() {
   //Constants
   const pomo = 25, short = 5, long = 15, pomoclr = "[#ba4949]", shortclr = "teal-600", longclr = "cyan-700"
@@ -9,28 +11,31 @@ function App() {
   const [isRunning, setIsRunning] = useState(false)
   const [seconds, setSeconds] = useState(0)
   const [limit, setLimit] = useState(pomo)
+  const [bgColor, setBgColor] = useState(`bg-${pomoclr}`)
   let timer = useRef(null)
 
   useEffect(() => {
+    //If timer expired
     if (seconds >= limit) {
-      window.alert("Please reset the timer!");
-      setIsRunning(false);
+      if (isRunning) {
+        window.alert("Please reset the timer!");
+        setIsRunning(false);
+      }
       return;
     }
 
     if (isRunning) {
       timer.current = setInterval(() => {
         setSeconds(prev => {
-          if (prev >= limit) {
+          if (prev >= limit - 1) {
             clearInterval(timer.current);
-            let message = limit === pomo ? "Hooray! Looks like the time's up" : "Hello there! Looks like the time's up";
-            window.alert(message);
             setIsRunning(false);
-
-            return prev
-          } else {
-            return prev + 1
+            if (audio.paused) {
+              audio.play();
+            }
           }
+
+          return prev + 1
         })
       }, 1000);
     } else {
@@ -41,11 +46,13 @@ function App() {
   }, [isRunning, limit])
 
   //For mode change and reset
-  const [bgColor, setBgColor] = useState(`bg-${pomoclr}`)
   const modeHandler = (mode = "") => {
     //stop timer and set time back to 0
     if (isRunning) setIsRunning(prev => !prev)
     setSeconds(0)
+
+    audio.pause();
+    audio.currentTime = 0;
 
     //for reset
     if (mode === "") return
@@ -150,6 +157,10 @@ function App() {
             />
           </button>
         </div>
+        <div className='p-3 md:p-5 text-xl font-bold'>
+          {(limit === pomo) ? "Let's Focus!" : ((limit === short) ? "Don't strain on your eyes." : "Enjoy! It's a long break!")}
+        </div>
+
       </div>
 
       <div>
